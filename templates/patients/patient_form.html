@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}New Patient | EDH{% endblock %}
+{% block subtitle %}Front Desk – Register patient{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="mb-3">New Patient Registration</h5>
+
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+      {% csrf_token %}
+      {% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Please fix the errors below:</strong>
+    <ul class="mb-0">
+      {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+          <li>
+            {% if field != "__all__" %}
+              <strong>{{ field|capfirst }}:</strong>
+            {% endif %}
+            {{ error }}
+          </li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+      <div class="col-md-4">
+        <label class="form-label">First Name</label>
+        {{ form.first_name }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Last Name</label>
+        {{ form.last_name }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Other Names</label>
+        {{ form.other_names }}
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Gender</label>
+        {{ form.gender }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Date of Birth</label>
+        {{ form.date_of_birth }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Passport Photo</label>
+        {{ form.passport_photo }}
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Phone</label>
+        {{ form.phone }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Email</label>
+        {{ form.email }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Blood Group</label>
+        {{ form.blood_group }}
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Address</label>
+        {{ form.address }}
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-check mt-4">
+          {{ form.is_hmo }} <label class="form-check-label">Under HMO</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">HMO</label>
+        {{ form.hmo }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">HMO ID Number</label>
+        {{ form.hmo_id_number }}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Next of Kin Name</label>
+        {{ form.next_of_kin_name }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Next of Kin Phone</label>
+        {{ form.next_of_kin_phone }}
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Allergies / Notes</label>
+        {{ form.allergies }}
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" style="background:var(--brand2); border:0; border-radius:12px;">
+          Save Patient
+        </button>
+        <a class="btn btn-outline-secondary" style="border-radius:12px;" href="{% url 'patients:patient_list' %}">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Small polish: bootstrap-like styling if you didn't add widgets
+  document.querySelectorAll("input, select, textarea").forEach(el=>{
+    if (!el.classList.contains("form-check-input")) el.classList.add("form-control");
+  });
+  document.querySelectorAll("select").forEach(el=>el.classList.add("form-select"));
+</script>
+{% endblock %}

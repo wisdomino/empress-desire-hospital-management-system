@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block subtitle %}Visit Summary{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="fw-bold">Diagnosis</div>
+    <div>{{ visit.diagnosis_primary }}</div>
+    <div class="text-muted small">{{ visit.diagnosis_secondary }}</div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="fw-bold">Prescriptions</div>
+    {% for p in visit.prescriptions.all %}
+      <div class="border rounded p-2 mb-2">
+        {{ p.drug }} — {{ p.dose }} {{ p.frequency }} {{ p.duration }}
+      </div>
+    {% empty %}
+      <div class="text-muted">No prescriptions.</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="fw-bold">Lab Results</div>
+    {% for r in visit.lab_requests.all %}
+      {% if r.result %}
+        <div class="border rounded p-2 mb-2">
+          <div class="fw-semibold">{{ r.test.name }}</div>
+          <div class="text-muted">{{ r.result.result_text }}</div>
+        </div>
+      {% endif %}
+    {% empty %}
+      <div class="text-muted">No lab results.</div>
+    {% endfor %}
+  </div>
+</div>
+
+<a href="{% url 'visits:emergency_pdf' visit.id %}"
+   class="btn btn-dark"
+   style="border-radius:12px; background:var(--brand); border:0;">
+  Download Emergency Summary PDF
+</a>
+{% endblock %}

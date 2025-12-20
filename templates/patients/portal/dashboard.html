@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block subtitle %}Patient Portal{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body text-center">
+        {% if patient.passport_photo %}
+          <img src="{{ patient.passport_photo.url }}" class="avatar mb-2">
+        {% endif %}
+        <div class="fw-bold">{{ patient.last_name }} {{ patient.first_name }}</div>
+        <div class="text-muted small">{{ patient.hospital_number }}</div>
+
+        {% if patient.is_hmo %}
+          <span class="badge badge-soft mt-2">{{ patient.hmo.name }}</span>
+        {% else %}
+          <span class="badge text-bg-secondary mt-2">Private</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3">Visit History</h5>
+        <div class="list-group">
+          {% for v in visits %}
+            <a class="list-group-item list-group-item-action"
+               href="{% url 'portal:visit_detail' v.id %}">
+              <div class="fw-semibold">{{ v.visit_number }}</div>
+              <div class="text-muted small">
+                {{ v.created_at|date:"M d, Y" }} • {{ v.diagnosis_primary|default:"—" }}
+              </div>
+            </a>
+          {% empty %}
+            <div class="text-muted">No visits yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

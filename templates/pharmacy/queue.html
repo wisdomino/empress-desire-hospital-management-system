@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Pharmacy Queue | EDH{% endblock %}
+{% block subtitle %}Pending prescriptions{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Visit</th><th>Patient</th><th>Drug</th><th>Instructions</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in items %}
+          <tr>
+            <td class="fw-semibold">{{ i.visit.visit_number }}</td>
+            <td>{{ i.visit.patient.hospital_number }} • {{ i.visit.patient.last_name }} {{ i.visit.patient.first_name }}</td>
+            <td>{{ i.drug }}</td>
+            <td class="text-muted">{{ i.dose }} • {{ i.frequency }} • {{ i.duration }} • {{ i.instructions }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-success" style="border-radius:12px;" href="{% url 'pharmacy:mark_dispensed' i.id %}">
+                Mark Dispensed
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-5">No pending prescriptions.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

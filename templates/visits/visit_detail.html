@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ visit.visit_number }} | EDH{% endblock %}
+{% block subtitle %}Visit summary{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h4 class="mb-1">Visit: {{ visit.visit_number }}</h4>
+    <div class="text-muted small">
+      {{ visit.patient.last_name }} {{ visit.patient.first_name }} • {{ visit.patient.hospital_number }}
+    </div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" style="border-radius:12px;" href="{% url 'visits:queue' %}">← Queue</a>
+    <a class="btn btn-outline-dark" style="border-radius:12px;" href="{% url 'visits:vitals_update' visit.id %}">
+      Update Vitals
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-5">
+    <div class="card">
+      <div class="card-body">
+        <div class="fw-bold mb-2">Vitals</div>
+        <div class="small text-muted mb-2">Captured: {% if visit.has_vitals %}Yes{% else %}No{% endif %}</div>
+
+        <div class="row g-2">
+          <div class="col-6"><div class="text-muted small">BP</div><div class="fw-semibold">{{ visit.bp_systolic|default:"—" }}/{{ visit.bp_diastolic|default:"—" }}</div></div>
+          <div class="col-6"><div class="text-muted small">Temp</div><div class="fw-semibold">{{ visit.temperature_c|default:"—" }}</div></div>
+          <div class="col-6"><div class="text-muted small">Pulse</div><div class="fw-semibold">{{ visit.pulse_bpm|default:"—" }}</div></div>
+          <div class="col-6"><div class="text-muted small">SpO₂</div><div class="fw-semibold">{{ visit.spo2|default:"—" }}</div></div>
+          <div class="col-6"><div class="text-muted small">Weight</div><div class="fw-semibold">{{ visit.weight_kg|default:"—" }}</div></div>
+          <div class="col-6"><div class="text-muted small">Height</div><div class="fw-semibold">{{ visit.height_cm|default:"—" }}</div></div>
+        </div>
+
+        <hr>
+        <div class="text-muted small">Triage Note</div>
+        <div class="mt-1">{{ visit.triage_note|default:"—" }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-7">
+    <a class="btn btn-dark" style="border-radius:12px; background:var(--brand); border:0;"
+   href="{% url 'visits:consultation' visit.id %}">
+  Open Consultation
+    </a>
+        <div class="text-muted">
+          We’ll add the doctor consultation form (complaints, exam, diagnosis, prescriptions, lab requests) in the next step.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Start Visit | EDH{% endblock %}
+{% block subtitle %}Start a new visit for {{ patient.hospital_number }}{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="mb-2">Start Visit</h5>
+    <div class="text-muted mb-3">
+      <span class="fw-semibold">{{ patient.last_name }} {{ patient.first_name }}</span>
+      • {{ patient.hospital_number }}
+    </div>
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-6">
+        <label class="form-label">Visit Type</label>
+        {{ form.visit_type }}
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" style="background:var(--brand2); border:0; border-radius:12px;">
+          Continue to Vitals →
+        </button>
+        <a class="btn btn-outline-secondary" style="border-radius:12px;" href="{% url 'patients:patient_detail' patient.id %}">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("select").forEach(el=>el.classList.add("form-select"));
+</script>
+{% endblock %}

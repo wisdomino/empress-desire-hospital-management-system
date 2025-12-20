@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Upload Result | EDH{% endblock %}
+{% block subtitle %}{{ lab_request.visit.visit_number }} — {{ lab_request.test.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="fw-bold mb-2">Upload Lab Result</div>
+    <div class="text-muted small mb-3">
+      Patient: {{ lab_request.visit.patient.hospital_number }} • {{ lab_request.visit.patient.last_name }} {{ lab_request.visit.patient.first_name }}
+    </div>
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-12">
+        <label class="form-label">Result</label>
+        {{ form.result_text }}
+      </div>
+      <div class="col-12">
+        <label class="form-label">Remarks</label>
+        {{ form.remarks }}
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" style="background:var(--brand2); border:0; border-radius:12px;">
+          Save Result
+        </button>
+        <a class="btn btn-outline-secondary" style="border-radius:12px;" href="{% url 'lab:queue' %}">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("textarea, input").forEach(el=>el.classList.add("form-control"));
+</script>
+{% endblock %}

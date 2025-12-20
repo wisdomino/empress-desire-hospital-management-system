@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Patient Portal</title>
+</head>
+<body>
+  <h2>Welcome, {{ patient.first_name }} {{ patient.last_name }}</h2>
+
+  <h3>Your Profile</h3>
+  <p><b>Hospital No:</b> {{ patient.hospital_number }}</p>
+  <p><b>Phone:</b> {{ patient.phone }}</p>
+  <p><b>Email:</b> {{ patient.email }}</p>
+
+  <h3>Visit History</h3>
+  {% if visits %}
+    <ul>
+      {% for v in visits %}
+        <li>
+          {{ v.created_at }} — {{ v.visit_type }} — {{ v.status }}
+          | <a href="{% url 'visits:consultation' v.id %}">View Consultation</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No visits yet.</p>
+  {% endif %}
+
+  <p><a href="/accounts/logout/">Logout</a></p>
+</body>
+</html>

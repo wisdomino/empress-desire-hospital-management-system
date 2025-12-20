@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="card shadow-sm" style="max-width: 420px; width: 100%;">
+    <div class="card-body p-4">
+      <h4 class="text-center mb-3">Hospital Login</h4>
+      <p class="text-muted text-center mb-4">
+        Sign in to access the hospital management system
+      </p>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div class="d-grid mt-3">
+          <button type="submit" class="btn btn-primary">
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

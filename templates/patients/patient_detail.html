@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.hospital_number }} | EDH{% endblock %}
+{% block subtitle %}Patient profile{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h4 class="mb-1">Patient Profile</h4>
+    <div class="text-muted small">{{ patient.hospital_number }}</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'patients:patient_list' %}" class="btn btn-outline-secondary" style="border-radius:12px;">
+      ← Back
+    </a>
+    <a href="{% url 'patients:patient_create' %}" class="btn btn-primary" style="background:var(--brand2); border:0; border-radius:12px;">
+      + New Patient
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3">
+          {% if patient.passport_photo %}
+            <img class="avatar" src="{{ patient.passport_photo.url }}" alt="passport">
+          {% else %}
+            <div class="avatar d-flex align-items-center justify-content-center text-muted">
+              <span class="fw-bold">EDH</span>
+            </div>
+          {% endif %}
+
+          <div>
+            <div class="fw-bold fs-5">{{ patient.last_name }} {{ patient.first_name }} {{ patient.other_names }}</div>
+            <div class="text-muted small">
+              {{ patient.gender }}
+              {% if patient.date_of_birth %} • DOB: {{ patient.date_of_birth }}{% endif %}
+            </div>
+            <div class="mt-2">
+              {% if patient.is_hmo and patient.hmo %}
+                <span class="badge badge-soft rounded-pill">HMO: {{ patient.hmo.name }}</span>
+              {% else %}
+                <span class="badge text-bg-secondary rounded-pill">Private</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="small text-muted">Quick Info</div>
+        <div class="mt-2">
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Phone</span>
+            <span class="fw-semibold">{{ patient.phone }}</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Email</span>
+            <span class="fw-semibold">{{ patient.email|default:"—" }}</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Blood Group</span>
+            <span class="fw-semibold">{{ patient.blood_group|default:"—" }}</span>
+          </div>
+        </div>
+
+        <div class="mt-3 d-grid gap-2">
+
+            <a class="btn btn-dark"
+               style="border-radius:12px; background:var(--brand); border:0;"
+               href="{% url 'visits:start_visit' patient.id %}">
+              Start Visit
+            </a>
+          
+            <a class="btn btn-outline-dark"
+               style="border-radius:12px;"
+               href="{% url 'visits:queue' %}">
+              View Visit Queue
+            </a>
+          
+          </div>
+          
+
+  <div class="col-12 col-lg-8">
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="fw-bold mb-2">Address</div>
+        <div class="text-muted">{{ patient.address|default:"—" }}</div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="fw-bold mb-2">HMO Details</div>
+        <div class="row g-2">
+          <div class="col-12 col-md-6">
+            <div class="text-muted small">Under HMO?</div>
+            <div class="fw-semibold">{% if patient.is_hmo %}Yes{% else %}No{% endif %}</div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="text-muted small">HMO ID</div>
+            <div class="fw-semibold">{{ patient.hmo_id_number|default:"—" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="fw-bold mb-2">Emergency Notes</div>
+        <div class="text-muted">Allergies / Chronic conditions</div>
+        <div class="mt-2">{{ patient.allergies|default:"—" }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

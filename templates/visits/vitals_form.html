@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Vitals | EDH{% endblock %}
+{% block subtitle %}Capture vitals for {{ visit.patient.hospital_number }}{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="fw-bold">Vitals Capture</div>
+      <div class="text-muted small">
+        {{ visit.patient.last_name }} {{ visit.patient.first_name }} • {{ visit.patient.hospital_number }}
+        • Visit: {{ visit.visit_number }}
+      </div>
+    </div>
+    <a class="btn btn-outline-dark" style="border-radius:12px;" href="{% url 'visits:queue' %}">
+      Visit Queue
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+
+      <div class="col-md-3">
+        <label class="form-label">Height (cm)</label>
+        {{ form.height_cm }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Weight (kg)</label>
+        {{ form.weight_kg }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Temperature (°C)</label>
+        {{ form.temperature_c }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">SpO₂ (%)</label>
+        {{ form.spo2 }}
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">BP Systolic</label>
+        {{ form.bp_systolic }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">BP Diastolic</label>
+        {{ form.bp_diastolic }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Pulse (bpm)</label>
+        {{ form.pulse_bpm }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Resp Rate</label>
+        {{ form.resp_rate }}
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Triage Note</label>
+        {{ form.triage_note }}
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" style="background:var(--brand2); border:0; border-radius:12px;">
+          Save Vitals & Send to Doctor
+        </button>
+        <a class="btn btn-outline-secondary" style="border-radius:12px;" href="{% url 'visits:visit_detail' visit.id %}">
+          View Visit
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("input, textarea").forEach(el=>el.classList.add("form-control"));
+</script>
+{% endblock %}
