@@ -73,9 +73,10 @@
 
       <div class="col-md-4">
         <div class="form-check mt-4">
-          {{ form.is_hmo }} <label class="form-check-label">Under HMO</label>
+          {{ form.is_hmo }}
+          <label class="form-check-label" for="id_is_hmo">Under HMO</label>
         </div>
-      </div>
+      </div>      
       <div class="col-md-4">
         <label class="form-label">HMO</label>
         {{ form.hmo }}
@@ -112,10 +113,50 @@
 </div>
 
 <script>
-  // Small polish: bootstrap-like styling if you didn't add widgets
-  document.querySelectorAll("input, select, textarea").forEach(el=>{
-    if (!el.classList.contains("form-check-input")) el.classList.add("form-control");
+  // Add Bootstrap styling safely (don't break checkboxes/radios/files)
+  document.querySelectorAll("input, select, textarea").forEach(el => {
+    const type = (el.getAttribute("type") || "").toLowerCase();
+
+    // Skip checkboxes/radios because they must use form-check-input
+    if (type === "checkbox" || type === "radio") {
+      el.classList.add("form-check-input");
+      return;
+    }
+
+    // File input styling (optional)
+    if (type === "file") {
+      el.classList.add("form-control");
+      return;
+    }
+
+    // Normal inputs/textareas
+    if (el.tagName.toLowerCase() === "select") return; // handled below
+    el.classList.add("form-control");
   });
-  document.querySelectorAll("select").forEach(el=>el.classList.add("form-select"));
+
+  document.querySelectorAll("select").forEach(el => el.classList.add("form-select"));
+
+  // Optional UX: Enable/disable HMO fields based on checkbox
+  document.addEventListener("DOMContentLoaded", function () {
+    const isHmo = document.getElementById("id_is_hmo");
+    const hmoSelect = document.getElementById("id_hmo");
+    const hmoId = document.getElementById("id_hmo_id_number");
+
+    if (!isHmo) return;
+
+    function toggleHmoFields() {
+      const enabled = isHmo.checked;
+      if (hmoSelect) hmoSelect.disabled = !enabled;
+      if (hmoId) hmoId.disabled = !enabled;
+
+      if (!enabled) {
+        if (hmoSelect) hmoSelect.value = "";
+        if (hmoId) hmoId.value = "";
+      }
+    }
+
+    isHmo.addEventListener("change", toggleHmoFields);
+    toggleHmoFields();
+  });
 </script>
 {% endblock %}

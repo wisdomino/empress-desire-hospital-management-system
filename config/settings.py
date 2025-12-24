@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'visits.apps.VisitsConfig',
     'pharmacy.apps.PharmacyConfig',
     'lab.apps.LabConfig',
+    'billing.apps.BillingConfig',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,18 @@ LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/patients/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DEBUG = False
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "wisdomino.pythonanywhere.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://wisdomino.pythonanywhere.com",
+]
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"

@@ -28,6 +28,7 @@ class PrescriptionItem(models.Model):
     duration = models.CharField(max_length=80, blank=True)   # 5 days
     instructions = models.CharField(max_length=255, blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

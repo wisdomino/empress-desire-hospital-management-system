@@ -8,6 +8,7 @@ from .forms import ConsultationForm
 from pharmacy.forms import PrescriptionItemForm
 from lab.forms import LabRequestForm
 from django.utils import timezone
+from billing.services import generate_invoice_for_visit
 
 @login_required
 def start_visit(request, patient_id: int):
@@ -106,12 +107,30 @@ def consultation(request, visit_id: int):
         "lab_requests": visit.lab_requests.select_related("test").order_by("-requested_at"),
     })
 
+
 @login_required
 def close_visit(request, visit_id: int):
     require_roles(request.user, roles={"doctor", "admin"})
-
     visit = get_object_or_404(Visit, pk=visit_id)
+
+    # Mark closed
     visit.status = Visit.Status.CLOSED
     visit.closed_at = timezone.now()
     visit.save(update_fields=["status", "closed_at", "updated_at"])
-    return redirect("visits:visit_detail", visit_id=visit.id)
+
+    # ✅ Idempotent invoice creation:
+    # If invoice already exists for this visit, reuse it.
+    if hasattr(visit, "invoice") and visit.invoice is not None:
+        return redirect("billing:invoice_detail", visit.invoice.id)
+
+    # Otherwise generate once
+    generate_invoice_for_visit(visit, user=request.user)
+
+    # Reload visit to ensure invoice relation is available
+    visit = Visit.objects.select_related("invoice").get(pk=visit.id)
+
+    # Safety fallback (should not happen after model fix)
+    if not getattr(visit, "invoice", None):
+        return redirect("visits:visit_detail", visit_id=visit.id)
+
+    return redirect("billing:invoice_detail", visit.invoice.id)

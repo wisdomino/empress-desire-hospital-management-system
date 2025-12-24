@@ -4,6 +4,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
+from visits.models import Visit
 
 from .forms import PatientForm
 from .models import Patient
@@ -90,11 +91,29 @@ def patient_detail(request, pk: int):
             raise PermissionDenied("Patient profile not linked.")
         if my_patient.pk != pk:
             raise PermissionDenied("You cannot view another patient's record.")
-        return render(request, "patients/patient_detail.html", {"patient": my_patient})
 
-    # Staff access
+        visits = (
+            my_patient.visits.select_related("doctor")
+            .order_by("-created_at")
+        )
+        return render(
+            request,
+            "patients/patient_detail.html",
+            {"patient": my_patient, "visits": visits},
+        )
+
+    # ✅ Staff access
     patient = get_object_or_404(Patient, pk=pk)
-    return render(request, "patients/patient_detail.html", {"patient": patient})
+    visits = (
+        patient.visits.select_related("doctor")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "patients/patient_detail.html",
+        {"patient": patient, "visits": visits},
+    )
 
 
 @login_required
@@ -103,12 +122,11 @@ def patient_portal(request):
     if patient is None:
         return redirect("patients:patient_list")  # staff fallback
 
-    visits = patient.visits.all().order_by("-created_at")
+    visits = patient.visits.select_related("doctor").order_by("-created_at")
+
     return render(
         request,
         "patients/patient_portal.html",
-        {
-            "patient": patient,
-            "visits": visits,
-        },
+        {"patient": patient, "visits": visits},
     )
+
