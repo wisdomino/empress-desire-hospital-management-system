@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'patients.apps.PatientsConfig',
     'visits.apps.VisitsConfig',
     'pharmacy.apps.PharmacyConfig',
-    'lab.apps.LabConfig',
     'billing.apps.BillingConfig',
+    'lab.apps.LabConfig',
 ]
 
 MIDDLEWARE = [

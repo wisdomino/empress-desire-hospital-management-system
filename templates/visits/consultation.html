@@ -132,57 +132,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-          <div class="fw-bold">Lab Requests</div>
-          <a class="btn btn-sm btn-outline-dark" style="border-radius:12px;" href="/lab/queue/">Lab Queue</a>
-        </div>
-
-        <form method="post" action="{% url 'lab:add_lab_request' visit.id %}" class="row g-2 mb-3">
-          {% csrf_token %}
-          <div class="col-12">
-            <label class="form-label small text-muted mb-1">Test</label>
-            {{ lab_request_form.test }}
-          </div>
-          <div class="col-12">
-            <label class="form-label small text-muted mb-1">Priority</label>
-            {{ lab_request_form.priority }}
-          </div>
-          <div class="col-12">
-            <button class="btn btn-primary w-100" style="background:var(--brand2); border:0; border-radius:12px;">
-              Request Lab Test
-            </button>
-          </div>
-        </form>        
-
-        <div class="small text-muted mb-2">Requests</div>
-        <div class="d-grid gap-2">
-          {% for r in lab_requests %}
-            <div class="border rounded-3 p-2">
-              <div class="fw-semibold">{{ r.test.name }}</div>
-              <div class="text-muted small">{{ r.get_priority_display }} • {{ r.requested_at|date:"M d, Y H:i" }}</div>
-              <div class="small">
-                {% if r.status == "RESULT_READY" %}
-                  <span class="badge text-bg-success rounded-pill">Result Ready</span>
-                {% else %}
-                  <span class="badge text-bg-warning rounded-pill">{{ r.get_status_display }}</span>
-                {% endif %}
-              </div>
-              {% if r.result %}
-                <div class="text-muted small mt-2">{{ r.result.result_text|truncatechars:140 }}</div>
-              {% endif %}
-            </div>
-          {% empty %}
-            <div class="text-muted small">No lab requests yet.</div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
 <script>
   document.querySelectorAll("select").forEach(el=>el.classList.add("form-select"));
   document.querySelectorAll("input, textarea").forEach(el=>el.classList.add("form-control"));

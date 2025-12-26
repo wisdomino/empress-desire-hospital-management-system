@@ -6,7 +6,6 @@ from .forms import VisitStartForm, VitalsForm
 from .models import Visit
 from .forms import ConsultationForm
 from pharmacy.forms import PrescriptionItemForm
-from lab.forms import LabRequestForm
 from django.utils import timezone
 from billing.services import generate_invoice_for_visit
 
@@ -92,7 +91,6 @@ def consultation(request, visit_id: int):
 
     # IMPORTANT: these are the forms for the right-side panels
     prescription_form = PrescriptionItemForm()
-    lab_request_form = LabRequestForm()
 
     if request.method == "POST" and form.is_valid():
         form.save()
@@ -102,9 +100,7 @@ def consultation(request, visit_id: int):
         "visit": visit,
         "form": form,
         "prescription_form": prescription_form,
-        "lab_request_form": lab_request_form,
         "prescriptions": visit.prescriptions.select_related("drug").order_by("-created_at"),
-        "lab_requests": visit.lab_requests.select_related("test").order_by("-requested_at"),
     })
 
 
@@ -134,3 +130,5 @@ def close_visit(request, visit_id: int):
         return redirect("visits:visit_detail", visit_id=visit.id)
 
     return redirect("billing:invoice_detail", visit.invoice.id)
+
+    
