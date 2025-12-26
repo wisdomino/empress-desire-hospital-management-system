@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color:#111; }
+    .brand { font-size:16px; font-weight:700; }
+    .muted { color:#555; }
+    .box { border:1px solid #ddd; border-radius:10px; padding:12px; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border-bottom:1px solid #eee; padding:7px; }
+    th { background:#f6f7fb; text-align:left; }
+    .right { text-align:right; }
+    .total { font-size:14px; font-weight:700; }
+  </style>
+</head>
+<body>
+
+<div class="brand">{{ hospital.name }}</div>
+<div class="muted">{{ hospital.address }}</div>
+<div class="muted">{{ hospital.phone }} • {{ hospital.email }}</div>
+
+<div style="height:10px;"></div>
+
+<div class="box">
+  <div><b>REMINDER: OUTSTANDING HMO RECEIVABLES</b></div>
+  <div class="muted">HMO: <b>{{ hmo_name }}</b></div>
+  <div class="muted">Generated: {{ generated_at|date:"M d, Y H:i" }}</div>
+  <div style="margin-top:8px;">
+    Kindly find below outstanding amounts due to {{ hospital.name }}. We request settlement within 7 days
+    or advise if any invoice is under query so we can resolve promptly.
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Invoice</th>
+      <th>Hospital No</th>
+      <th>Patient</th>
+      <th class="right">Days</th>
+      <th class="right">Outstanding (₦)</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td><b>{{ r.inv.invoice_number }}</b></td>
+      <td>{{ r.inv.patient.hospital_number }}</td>
+      <td>{{ r.inv.patient.last_name }} {{ r.inv.patient.first_name }}</td>
+      <td class="right">{{ r.days }}</td>
+      <td class="right">{{ r.outstanding|floatformat:2 }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<div class="box" style="margin-top:10px;">
+  <div class="muted">Total Outstanding</div>
+  <div class="total">₦{{ total_outstanding|floatformat:2 }}</div>
+</div>
+
+<p class="muted" style="font-size:10px; margin-top:10px;">
+For clarification, contact Billing/Accounts Department. This document was generated from EDH HMS.
+</p>
+
+</body>
+</html>

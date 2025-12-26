@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Add Invoices | EDH{% endblock %}
+{% block subtitle %}{{ batch.hmo_name }} — Select invoices to claim{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h4 class="mb-1">Add Invoices</h4>
+    <div class="text-muted small">Only eligible invoices are shown (HMO amount > 0, not already claimed)</div>
+  </div>
+  <a class="btn btn-outline-secondary" style="border-radius:12px;"
+     href="{% url 'billing:claim_batch_detail' batch.id %}">
+    ← Back
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th style="width:48px;"></th>
+              <th>Invoice</th>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>HMO Amount (₦)</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for inv in eligible %}
+            <tr>
+              <td>
+                <input class="form-check-input" type="checkbox" name="invoice_ids" value="{{ inv.id }}">
+              </td>
+              <td class="fw-semibold">{{ inv.invoice_number }}</td>
+              <td>
+                <div class="fw-semibold">{{ inv.patient.last_name }} {{ inv.patient.first_name }}</div>
+                <div class="text-muted small">{{ inv.patient.hospital_number }}</div>
+              </td>
+              <td class="text-muted">{{ inv.created_at|date:"M d, Y" }}</td>
+              <td>{{ inv.hmo_amount|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5" class="text-center text-muted py-5">No eligible invoices found.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <button class="btn btn-primary" style="background:var(--brand2); border:0; border-radius:12px;">
+        Add Selected Invoices
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

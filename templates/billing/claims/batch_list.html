@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Claim Batches | EDH{% endblock %}
+{% block subtitle %}Claims{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="mb-3">Claim Batches</h5>
+
+    {% if batches %}
+      <div class="list-group">
+        {% for b in batches %}
+          <a class="list-group-item list-group-item-action"
+             href="{% url 'billing:batch_detail' b.id %}">
+            <div class="fw-semibold">
+              {{ b.name|default:"Batch" }} ({{ b.id }})
+            </div>
+            <div class="text-muted small">
+              {{ b.created_at|date:"M d, Y" }}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-muted">No claim batches yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

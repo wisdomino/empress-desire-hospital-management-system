@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color:#111; }
+    .header { display:flex; justify-content:space-between; align-items:flex-start; }
+    .brand { font-size:16px; font-weight:700; }
+    .muted { color:#555; }
+    .box { border:1px solid #ddd; border-radius:8px; padding:10px; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border-bottom:1px solid #eee; padding:7px; vertical-align:top; }
+    th { text-align:left; background:#f6f7fb; }
+    .right { text-align:right; }
+    .total { font-size:14px; font-weight:700; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">{{ hospital.name }}</div>
+    <div class="muted">{{ hospital.address }}</div>
+    <div class="muted">{{ hospital.phone }} • {{ hospital.email }}</div>
+  </div>
+
+  <div class="box" style="min-width:260px;">
+    <div><b>HMO CLAIM COVER SHEET</b></div>
+    <div class="muted">Batch: <b>#{{ batch.id }}</b></div>
+    <div class="muted">HMO: <b>{{ batch.hmo_name }}</b></div>
+    <div class="muted">Period: {{ batch.period_start }} → {{ batch.period_end }}</div>
+    <div class="muted">Status: <b>{{ batch.status }}</b></div>
+  </div>
+</div>
+
+<div style="height:10px;"></div>
+
+<div class="box">
+  <div><b>Summary</b></div>
+  <div class="muted">Total Items: {{ items|length }}</div>
+  <div class="muted">Total Claim Amount: <span class="total">₦{{ total_hmo|floatformat:2 }}</span></div>
+  <div class="muted">Generated: {{ generated_at|date:"M d, Y H:i" }}</div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Hospital No</th>
+      <th>Patient</th>
+      <th>Visit</th>
+      <th>Invoice</th>
+      <th class="right">HMO Amount (₦)</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for it in items %}
+    <tr>
+      <td><b>{{ it.hospital_number }}</b></td>
+      <td>{{ it.patient }}</td>
+      <td class="muted">{{ it.visit_number|default:"—" }}</td>
+      <td><b>{{ it.invoice.invoice_number }}</b></td>
+      <td class="right">{{ it.hmo_amount|floatformat:2 }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<p class="muted" style="margin-top:10px; font-size:10px;">
+This cover sheet summarizes claims. Attach the exported CSV and supporting clinical/billing documents as required by the HMO.
+</p>
+
+</body>
+</html>

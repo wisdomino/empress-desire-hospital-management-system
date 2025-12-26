@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Update Follow-up | EDH{% endblock %}
+{% block subtitle %}Update HMO follow-up{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="fw-bold mb-2">{{ f.hmo_name }}</div>
+    <div class="text-muted small mb-3">{{ f.period_start }} → {{ f.period_end }}</div>
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          <option value="OPEN" {% if f.status == "OPEN" %}selected{% endif %}>OPEN</option>
+          <option value="REMINDED" {% if f.status == "REMINDED" %}selected{% endif %}>REMINDED</option>
+          <option value="ESCALATED" {% if f.status == "ESCALATED" %}selected{% endif %}>ESCALATED</option>
+          <option value="SETTLED" {% if f.status == "SETTLED" %}selected{% endif %}>SETTLED</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Next Follow-up Date</label>
+        <input type="date" name="next_follow_up_at" class="form-control" value="{{ f.next_follow_up_at|date:'Y-m-d' }}">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Notes</label>
+        <textarea name="notes" class="form-control" rows="4">{{ f.notes }}</textarea>
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-dark" style="border-radius:12px; background:var(--brand); border:0;">
+          Save
+        </button>
+        <a class="btn btn-outline-secondary" style="border-radius:12px;" href="{% url 'billing:followups_list' %}">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

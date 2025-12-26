@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color:#111; }
+    .header { display:flex; justify-content:space-between; align-items:flex-start; }
+    .brand { font-size:16px; font-weight:700; }
+    .muted { color:#555; }
+    .box { border:1px solid #ddd; border-radius:8px; padding:10px; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border-bottom:1px solid #eee; padding:8px; vertical-align:top; }
+    th { text-align:left; background:#f6f7fb; }
+    .right { text-align:right; }
+    .pill { display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid #ddd; font-size:11px; }
+    .total { font-size:14px; font-weight:700; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">{{ hospital.name }}</div>
+    <div class="muted">{{ hospital.address }}</div>
+    <div class="muted">{{ hospital.phone }} • {{ hospital.email }}</div>
+  </div>
+  <div class="box" style="min-width:240px;">
+    <div><b>INVOICE</b></div>
+    <div class="muted">Invoice No: <b>{{ invoice.invoice_number }}</b></div>
+    <div class="muted">Date: {{ invoice.created_at|date:"M d, Y H:i" }}</div>
+    <div class="muted">
+      Status:
+      <span class="pill">{{ invoice.get_status_display }}</span>
+    </div>
+  </div>
+</div>
+
+<div style="height:10px;"></div>
+
+<div class="box">
+  <div><b>Billed To</b></div>
+  <div>{{ invoice.patient.last_name }} {{ invoice.patient.first_name }}</div>
+  <div class="muted">Hospital No: {{ invoice.patient.hospital_number }}</div>
+  <div class="muted">Phone: {{ invoice.patient.phone }}</div>
+  <div class="muted">
+    Payment Type:
+    {% if invoice.patient.is_hmo and invoice.hmo_name %}
+      HMO ({{ invoice.hmo_name }})
+    {% else %}
+      Private
+    {% endif %}
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th class="right">Qty</th>
+      <th class="right">Unit (₦)</th>
+      <th class="right">Line Total (₦)</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for line in invoice.lines.all %}
+    <tr>
+      <td>
+        <b>{{ line.description }}</b><br>
+        <span class="muted">Patient: ₦{{ line.patient_share|floatformat:2 }}</span>
+        {% if line.hmo_share > 0 %}
+          <span class="muted"> • HMO: ₦{{ line.hmo_share|floatformat:2 }}</span>
+        {% endif %}
+      </td>
+      <td class="right">{{ line.qty }}</td>
+      <td class="right">{{ line.unit_price|floatformat:2 }}</td>
+      <td class="right">{{ line.line_total|floatformat:2 }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<div style="height:8px;"></div>
+
+<div class="box">
+  <div style="display:flex; justify-content:space-between;">
+    <div>
+      <div class="muted">Patient Share</div>
+      <div class="total">₦{{ invoice.patient_amount|floatformat:2 }}</div>
+    </div>
+    <div>
+      <div class="muted">HMO Share</div>
+      <div class="total">₦{{ invoice.hmo_amount|floatformat:2 }}</div>
+    </div>
+    <div>
+      <div class="muted">Paid</div>
+      <div class="total">₦{{ invoice.amount_paid|floatformat:2 }}</div>
+    </div>
+    <div>
+      <div class="muted">Balance</div>
+      <div class="total">₦{{ invoice.balance|floatformat:2 }}</div>
+    </div>
+  </div>
+</div>
+
+<p class="muted" style="margin-top:10px; font-size:10px;">
+Generated: {{ generated_at|date:"M d, Y H:i" }} • EDH HMS
+</p>
+
+</body>
+</html>

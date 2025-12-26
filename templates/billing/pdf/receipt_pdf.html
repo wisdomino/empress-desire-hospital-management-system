@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color:#111; }
+    .brand { font-size:16px; font-weight:700; text-align:center; }
+    .muted { color:#555; text-align:center; }
+    .box { border:1px solid #ddd; border-radius:10px; padding:12px; }
+    .row { display:flex; justify-content:space-between; margin:6px 0; }
+    .big { font-size:18px; font-weight:700; }
+    .line { border-top:1px dashed #ccc; margin:10px 0; }
+  </style>
+</head>
+<body>
+
+<div class="brand">{{ hospital.name }}</div>
+<div class="muted">{{ hospital.address }}</div>
+<div class="muted">{{ hospital.phone }} • {{ hospital.email }}</div>
+
+<div class="line"></div>
+
+<div class="box">
+  <div class="row"><div><b>RECEIPT</b></div><div>{{ payment.paid_at|date:"M d, Y H:i" }}</div></div>
+
+  <div class="row"><div class="muted">Invoice</div><div><b>{{ invoice.invoice_number }}</b></div></div>
+  <div class="row"><div class="muted">Patient</div><div><b>{{ invoice.patient.last_name }} {{ invoice.patient.first_name }}</b></div></div>
+  <div class="row"><div class="muted">Hospital No</div><div><b>{{ invoice.patient.hospital_number }}</b></div></div>
+
+  <div class="line"></div>
+
+  <div class="row"><div class="muted">Amount Paid</div><div class="big">₦{{ payment.amount|floatformat:2 }}</div></div>
+  <div class="row"><div class="muted">Method</div><div><b>{{ payment.get_method_display }}</b></div></div>
+  <div class="row"><div class="muted">Reference</div><div>{{ payment.reference|default:"—" }}</div></div>
+
+  <div class="line"></div>
+
+  <div class="row"><div class="muted">Patient Share</div><div>₦{{ invoice.patient_amount|floatformat:2 }}</div></div>
+  <div class="row"><div class="muted">Total Paid</div><div>₦{{ invoice.amount_paid|floatformat:2 }}</div></div>
+  <div class="row"><div class="muted">Balance</div><div><b>₦{{ invoice.balance|floatformat:2 }}</b></div></div>
+</div>
+
+<p class="muted" style="font-size:10px; margin-top:10px;">
+Generated: {{ generated_at|date:"M d, Y H:i" }} • Thank you.
+</p>
+
+</body>
+</html>

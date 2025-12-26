@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}{{ invoice.invoice_number }} | EDH{% endblock %}
+{% block subtitle %}Invoice details & payments{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <div>
+    <h4 class="mb-1">{{ invoice.invoice_number }}</h4>
+    <div class="text-muted small">
+      {{ invoice.patient.last_name }} {{ invoice.patient.first_name }}
+      • {{ invoice.patient.hospital_number }}
+    </div>
+  </div>
+  <a href="{% url 'billing:invoice_list' %}"
+     class="btn btn-outline-secondary"
+     style="border-radius:12px;">
+    ← Back to Invoices
+  </a>
+  <a class="btn btn-dark" style="border-radius:12px; background:var(--brand); border:0;"
+   href="{% url 'billing:invoice_pdf' invoice.id %}">
+  Print/Download Invoice PDF
+</a>
+</div>
+
+<div class="row g-3">
+  <!-- INVOICE LINES -->
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit (₦)</th>
+                <th>Total (₦)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for line in invoice.lines.all %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ line.description }}</div>
+                  <div class="text-muted small">
+                    Patient: ₦{{ line.patient_share|floatformat:2 }}
+                    {% if line.hmo_share > 0 %}
+                      • HMO: ₦{{ line.hmo_share|floatformat:2 }}
+                    {% endif %}
+                  </div>
+                </td>
+                <td>{{ line.qty }}</td>
+                <td>{{ line.unit_price|floatformat:2 }}</td>
+                <td>{{ line.line_total|floatformat:2 }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot class="table-light">
+              <tr>
+                <th colspan="3" class="text-end">Grand Total</th>
+                <th>₦{{ invoice.total_amount|floatformat:2 }}</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT PANEL -->
+  <div class="col-lg-4">
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="fw-bold mb-2">Summary</div>
+
+        <div class="d-flex justify-content-between">
+          <span class="text-muted">Patient Share</span>
+          <span class="fw-semibold">₦{{ invoice.patient_amount|floatformat:2 }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-muted">Paid</span>
+          <span class="fw-semibold">₦{{ invoice.amount_paid|floatformat:2 }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-muted">Balance</span>
+          <span class="fw-bold text-danger">₦{{ invoice.balance|floatformat:2 }}</span>
+        </div>
+
+        <hr>
+
+        <div class="fw-bold mb-2">Add Payment</div>
+        <form method="post" action="{% url 'billing:add_payment' invoice.id %}">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label class="form-label">Amount (₦)</label>
+            <input name="amount" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Method</label>
+            <select name="method" class="form-select">
+              <option value="CASH">Cash</option>
+              <option value="POS">POS</option>
+              <option value="TRANSFER">Transfer</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Reference (optional)</label>
+            <input name="reference" class="form-control">
+          </div>
+          <button class="btn btn-primary w-100"
+                  style="background:var(--brand2); border:0; border-radius:12px;">
+            Record Payment
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+          <div class="fw-bold mb-2">Payments</div>
+      
+          {% for p in invoice.payments.all %}
+            <div class="border rounded-3 p-2 mb-2">
+              <div class="fw-semibold">₦{{ p.amount|floatformat:2 }}</div>
+      
+              <div class="text-muted small">
+                {{ p.get_method_display }} • {{ p.paid_at|date:"M d, Y H:i" }}
+              </div>
+      
+              <!-- ✅ Receipt PDF Button -->
+              <a class="btn btn-sm btn-outline-dark mt-2"
+                 style="border-radius:12px;"
+                 href="{% url 'billing:receipt_pdf' invoice.id p.id %}">
+                Receipt PDF
+              </a>
+            </div>
+          {% empty %}
+            <div class="text-muted small">No payments yet.</div>
+          {% endfor %}
+      
+        </div>
+      </div>      
+</div>
+{% endblock %}

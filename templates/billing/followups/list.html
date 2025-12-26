@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}HMO Follow-Ups | EDH{% endblock %}
+{% block subtitle %}Weekly accounts action list{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>HMO</th>
+            <th>Period</th>
+            <th>Status</th>
+            <th>Next Follow-Up</th>
+            <th>Last Action</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for i in items %}
+          <tr>
+            <td class="fw-semibold">{{ i.hmo_name }}</td>
+            <td>{{ i.period_start }} → {{ i.period_end }}</td>
+            <td>
+              <span class="badge rounded-pill
+                {% if i.status == 'SETTLED' %}text-bg-success
+                {% elif i.status == 'ESCALATED' %}text-bg-danger
+                {% else %}text-bg-warning{% endif %}">
+                {{ i.get_status_display }}
+              </span>
+            </td>
+            <td>{{ i.next_follow_up_at|default:"—" }}</td>
+            <td class="text-muted">{{ i.last_action_at|date:"M d, Y H:i"|default:"—" }}</td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-dark" style="border-radius:12px;"
+                 href="{% url 'billing:followup_update' i.id %}">
+                Update
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center text-muted py-5">No follow-ups scheduled.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

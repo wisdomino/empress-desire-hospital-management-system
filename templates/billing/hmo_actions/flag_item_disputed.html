@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Dispute Claim Item | EDH{% endblock %}
+{% block subtitle %}Flag claim item dispute{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="fw-bold mb-2">Dispute Claim Item</div>
+    <div class="text-muted small mb-3">
+      Batch #{{ item.batch.id }} • {{ item.batch.hmo_name }} • {{ item.invoice.invoice_number }}
+    </div>
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-12">
+        <label class="form-label">Reason</label>
+        <textarea name="reason" class="form-control" rows="5" required></textarea>
+      </div>
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-dark" style="border-radius:12px; background:var(--brand); border:0;">Save</button>
+        <a class="btn btn-outline-secondary" style="border-radius:12px;"
+           href="{% url 'billing:claim_batch_detail' item.batch.id %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

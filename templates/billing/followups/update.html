@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Update Follow-Up | EDH{% endblock %}
+{% block subtitle %}{{ fu.hmo_name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          {% for k,v in fu.Status.choices %}
+            <option value="{{ k }}" {% if fu.status == k %}selected{% endif %}>{{ v }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Next Follow-Up</label>
+        <input type="date" name="next_follow_up_at" class="form-control"
+               value="{{ fu.next_follow_up_at }}">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Notes</label>
+        <textarea name="notes" class="form-control" rows="4"
+          placeholder="Call outcome, email sent, documents requested, escalation details...">{{ fu.notes }}</textarea>
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" style="background:var(--brand2); border:0; border-radius:12px;">
+          Save
+        </button>
+        <a class="btn btn-outline-secondary" style="border-radius:12px;"
+           href="{% url 'billing:followups' %}">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

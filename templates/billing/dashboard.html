@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Revenue Dashboard | EDH{% endblock %}
+{% block subtitle %}Financial performance overview{% endblock %}
+
+{% block content %}
+<a href="{% url 'billing:followups_list' %}"
+   class="btn btn-sm btn-outline-dark"
+   style="border-radius:12px;">
+  Follow-Ups Due: <b>{{ followups_due }}</b>
+</a>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <div class="text-muted small">Collected Today</div>
+        <div class="fw-bold fs-4">₦{{ payments_today|floatformat:2 }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <div class="text-muted small">Collected (MTD)</div>
+        <div class="fw-bold fs-4">₦{{ payments_mtd|floatformat:2 }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <div class="text-muted small">Outstanding (Patients)</div>
+        <div class="fw-bold fs-4 text-danger">₦{{ outstanding|floatformat:2 }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <div class="text-muted small">HMO Receivables</div>
+        <div class="fw-bold fs-4 text-warning">₦{{ hmo_receivables|floatformat:2 }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body">
+        <div class="fw-bold mb-2">Revenue Trend (Last 30 Days)</div>
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="fw-bold mb-2">By Payment Method</div>
+        <canvas id="methodChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const trendData = {{ trend|safe }};
+const trendLabels = trendData.map(i => i.day);
+const trendValues = trendData.map(i => i.total);
+
+new Chart(document.getElementById("trendChart"), {
+  type: "line",
+  data: {
+    labels: trendLabels,
+    datasets: [{
+      label: "Revenue (₦)",
+      data: trendValues,
+      borderWidth: 2,
+      fill: false,
+      tension: 0.3
+    }]
+  }
+});
+
+const methodData = {{ by_method|safe }};
+new Chart(document.getElementById("methodChart"), {
+  type: "doughnut",
+  data: {
+    labels: methodData.map(i => i.method),
+    datasets: [{
+      data: methodData.map(i => i.total)
+    }]
+  }
+});
+</script>
+{% endblock %}
